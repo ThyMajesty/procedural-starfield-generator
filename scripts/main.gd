@@ -281,11 +281,6 @@ func _build_push_constant_nebula(color_count: int) -> PackedByteArray:
 	buf.put_32(nebula_dist_octaves)
 	buf.put_float(nebula_dist_strength)
 
-	print(nebula_curl_scale)
-	print(nebula_curl_strength)
-	print(nebula_curl_octaves)
-	print(nebula_curl_eps)
-
 	buf.put_float(nebula_curl_scale)
 	buf.put_float(nebula_curl_strength)
 	buf.put_32(nebula_curl_octaves)
