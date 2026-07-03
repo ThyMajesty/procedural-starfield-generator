@@ -1,0 +1,3 @@
+[submodule "external/ui_widget"]
+	path = external/ui_widget
+	url = https://github.com/ThyMajesty/ui_widget.git
