@@ -116,11 +116,14 @@ var widget_config: Array[Dictionary] = [
 	{ key = "nebula_curl_eps", type = "float", min_value = 0.1, max_value = 10.0, step = 0.1 },
 ]
 
+var time_last_elapsed := Time.get_ticks_msec() 
+
 # TODO revisit nodes resolution; consider just find with caching instead of explicit
 @onready var settings_panel: VBoxContainer = get_node("SettingsPanel")
 @onready var sprite_2d: Sprite2D = get_node("../../../SubViewportContainer/SubViewport/Node2D/Sprite2D")
 @onready var generate_button: Button = get_node("../../HBoxContainer/GenerateButton")
 @onready var save_button: Button = get_node("../../HBoxContainer/SaveButton")
+@onready var info_label: Label = get_node("../../HBoxContainer/InfoLabel")
 
 var widget_dict: Dictionary = {}
 var _image: Image
@@ -185,6 +188,8 @@ func _value_changed(value: Variant, key: String, emit: bool = true) -> void:
 	if emit:
 		setting_changed.emit(value, key)
 
+func _build_info_label() -> void:
+	info_label.text = "Elapsed: " + str(time_last_elapsed) + "ms"
 
 func _on_save_pressed() -> void:
 	if not _image:
@@ -202,6 +207,7 @@ func _on_save_file_selected(path: String) -> void:
 #TODO: move GPU stuff to a separate class
 
 func generate() -> void:
+	var time_start = Time.get_ticks_msec()
 	if use_random_seed:
 		seed_value = randi()
 
@@ -212,6 +218,10 @@ func generate() -> void:
 	_texture = ImageTexture.create_from_image(_image)
 
 	sprite_2d.texture = _texture
+	var time_end = Time.get_ticks_msec()
+	time_last_elapsed = time_end - time_start
+
+	_build_info_label()
 
 
 func _build_push_constant_star_gen(attempt_count: int) -> PackedByteArray:

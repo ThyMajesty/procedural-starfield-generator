@@ -39,6 +39,10 @@ layout_mode = 2
 size_flags_horizontal = 8
 text = "Generate"
 
+[node name="InfoLabel" type="Label" parent="Control/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1015246456]
+layout_mode = 2
+text = "Info:"
+
 [node name="HSeparator" type="HSeparator" parent="Control/HBoxContainer/VBoxContainer" unique_id=1427690969]
 layout_mode = 2
 
@@ -73,7 +77,7 @@ script = ExtResource("2_0wfyh")
 
 [node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer" unique_id=1915719665]
 handle_input_locally = false
-size = Vector2i(1020, 648)
+size = Vector2i(980, 648)
 render_target_update_mode = 4
 
 [node name="Node2D" type="Node2D" parent="Control/HBoxContainer/SubViewportContainer/SubViewport" unique_id=665377583]
