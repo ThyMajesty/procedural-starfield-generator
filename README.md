@@ -33,7 +33,7 @@ A GPU-accelerated tool for generating tileable(questionable) starfield/nebula te
 
 ## Setup
 
-1. Clone with `repo git clone --recurse-submodules` to init submodule
+1. Clone and do `git subtree add --prefix=addons/ui_widget https://github.com/ThyMajesty/ui_widget.git addon --squash` to init addon
 2. Enable the `ui_widget` plugin in Project Settings → Plugins
 3. Open the main scene, hit Generate
 4. After generation you can save the result
