@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cwwc8yamr3ppx"
+path="res://.godot/imported/nebula.glsl-93c468d6ceeccd3aa3bd7dc395758974.res"
+
+[deps]
+
+source_file="res://shaders/compute/nebula.glsl"
+dest_files=["res://.godot/imported/nebula.glsl-93c468d6ceeccd3aa3bd7dc395758974.res"]
+
+[params]
+
