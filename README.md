@@ -33,10 +33,10 @@ A GPU-accelerated tool for generating tileable(questionable) starfield/nebula te
 
 ## Setup
 
-1. Clone the repo
-2. Init submodules (symlinked into a proper folder layout)
-3. Enable the `ui_widget` plugin in Project Settings → Plugins
-4. Open the main scene, hit Generate
+1. Clone with `repo git clone --recurse-submodules` to init submodule
+2. Enable the `ui_widget` plugin in Project Settings → Plugins
+3. Open the main scene, hit Generate
+4. After generation you can save the result
 
 ## Architecture
 
@@ -62,4 +62,4 @@ Generation pipeline per `generate()` call:
 - [ ] Look into vortex-center-based swirl (explicit seed-derived rotation points) as an art-directable alternative to curl
 - [ ] Nebula color count currently capped at 5 flat widget slots — need to be reimplemented to dynamically build and wire colors array
 - [ ] Refine UI scaling
-- [ ] Revisit overall structure; Divide into proper classes
+- [ ] Revisit overall structure and divide into proper classes
