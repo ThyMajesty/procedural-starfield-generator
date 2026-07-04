@@ -129,7 +129,7 @@ var widget_dict: Dictionary = {}
 var _image: Image
 var _texture: ImageTexture
 
-var save_dialog: FileDialog
+var file_manager: FileManager
 
 func _ready() -> void:
 	_build_widgets()
@@ -143,15 +143,12 @@ func _ready() -> void:
 
 	generate_button.pressed.connect(generate)
 
-	save_dialog = FileDialog.new()
-	save_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-	save_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	save_dialog.add_filter("*.png", "PNG Image")
-	save_dialog.current_file = "starfield_%d.png" % Time.get_unix_time_from_system()
-	save_dialog.file_selected.connect(_on_save_file_selected)
-	add_child(save_dialog)
-
+	file_manager = FileManager.new(self)
 	save_button.pressed.connect(_on_save_pressed)
+
+func _on_save_pressed() -> void:
+	# mock setting for now 
+	file_manager.request_save(_image, seed_value, {})
 
 func _build_widgets() -> void:
 	for cfg in widget_config:
@@ -191,18 +188,6 @@ func _value_changed(value: Variant, key: String, emit: bool = true) -> void:
 func _build_info_label() -> void:
 	info_label.text = "Elapsed: " + str(time_last_elapsed) + "ms"
 
-func _on_save_pressed() -> void:
-	if not _image:
-		push_warning("Nothing generated yet.")
-		return
-	save_dialog.popup_centered_ratio(0.6)
-
-func _on_save_file_selected(path: String) -> void:
-	var err := _image.save_png(path)
-	if err != OK:
-		push_error("Failed to save PNG: %s" % err)
-	else:
-		print("Saved: %s" % path)
 
 #TODO: move GPU stuff to a separate class
 
