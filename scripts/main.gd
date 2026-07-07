@@ -2,120 +2,6 @@ extends VBoxContainer
 
 #  ¯\_(ツ)_/¯
 
-signal setting_changed(value: Variant, key: String)
-
-# settings
-var resolution: int = 4096
-var star_count: int = 64000
-var seed_value: int = 666
-var use_random_seed: bool = false;
-
-var use_density_noise: bool = true
-var density_noise_scale: float = 2.0
-var density_bias: float = 1.0
-
-var brightness_power: float = 16.0
-var min_brightness: float = 0.1
-var max_brightness: float = 1.0
-
-var min_radius: float = 0.5
-var max_radius: float = 2.2
-var size_follows_brightness: bool = true
-
-var giant_chance: float = 0.001
-var giant_size_multiplier: float = 5.0
-
-var use_color_variation: bool = true
-var warm_chance: float = 0.33
-var blue_chance: float = 0.25
-
-var background_color: Color = Color(0.0, 0.0, 0.02, 1.0)
-
-# nebula
-var use_nebula: bool = true
-var nebula_scale: float = 2.0
-var nebula_octaves: int = 8
-var nebula_intensity: float = 0.4
-var nebula_color_count: int = 5
-
-
-var nebula_color_1: Color = Color(0.4, 0.15, 0.5, 1.0)
-var nebula_color_2: Color = Color(0.15, 0.3, 0.6, 1.0)
-var nebula_color_3: Color = Color(0.8, 0.3, 0.4, 1.0)
-var nebula_color_4: Color = Color(0.9, 0.6, 0.2, 1.0)
-var nebula_color_5: Color = Color(0.2, 0.5, 0.5, 1.0)
-
-var nebula_warp_strength: float = 72.0
-var nebula_warp_scale: float = 10.0
-
-var nebula_dist_scale: float = 0.5
-var nebula_dist_octaves: int = 3
-var nebula_dist_strength: float = 0.6
-
-var nebula_curl_scale: float = 3.0
-var nebula_curl_strength: float = 150.0
-var nebula_curl_octaves: int = 3
-var nebula_curl_eps: float = 1.0
-
-func _collect_nebula_colors() -> Array[Color]:
-	var all: Array[Color] = [nebula_color_1, nebula_color_2, nebula_color_3, nebula_color_4, nebula_color_5]
-	return all.slice(0, nebula_color_count)
-
-# TODO: move GUI and potentially settings to a separate class(s)
-# ui typed config driving both widget generation and value application
-# type: "bool" | "color" | "int" | "float"
-var widget_config: Array[Dictionary] = [
-	{ key = "resolution", type = "int", min_value = 256, max_value = 16384, step = 256 },
-	{ key = "star_count", type = "int", min_value = 100, max_value = 1000000, step = 1 },
-	{ key = "seed_value", type = "int", min_value = 0, max_value = 1000000, step = 1 },
-	{ key = "use_random_seed", type = "bool"},
-
-	{ key = "use_density_noise", type = "bool" },
-	{ key = "density_noise_scale", type = "float", min_value = 0.1, max_value = 20.0, step = 0.1 },
-	{ key = "density_bias", type = "float", min_value = 0.1, max_value = 5.0, step = 0.1 },
-
-	{ key = "brightness_power", type = "float", min_value = 0.5, max_value = 32.0, step = 0.1 },
-	{ key = "min_brightness", type = "float", min_value = 0.0, max_value = 1.0, step = 0.01 },
-	{ key = "max_brightness", type = "float", min_value = 0.0, max_value = 1.0, step = 0.01 },
-
-	{ key = "min_radius", type = "float", min_value = 0.1, max_value = 10.0, step = 0.1 },
-	{ key = "max_radius", type = "float", min_value = 0.1, max_value = 10.0, step = 0.1 },
-	{ key = "size_follows_brightness", type = "bool" },
-
-	{ key = "giant_chance", type = "float", min_value = 0.0, max_value = 0.1, step = 0.001 },
-	{ key = "giant_size_multiplier", type = "float", min_value = 1.0, max_value = 10.0, step = 0.1 },
-
-	{ key = "use_color_variation", type = "bool" },
-	{ key = "warm_chance", type = "float", min_value = 0.0, max_value = 1.0, step = 0.01 },
-	{ key = "blue_chance", type = "float", min_value = 0.0, max_value = 1.0, step = 0.01 },
-
-	{ key = "background_color", type = "color" },
-
-	{ key = "use_nebula", type = "bool" },
-	{ key = "nebula_scale", type = "float", min_value = 0.1, max_value = 20.0, step = 0.1 },
-	{ key = "nebula_octaves", type = "int", min_value = 1, max_value = 16, step = 1 },
-	{ key = "nebula_intensity", type = "float", min_value = 0.0, max_value = 1.0, step = 0.01 },
-	{ key = "nebula_color_count", type = "int", min_value = 1, max_value = 5, step = 1 },
-
-	{ key = "nebula_color_1", type = "color" },
-	{ key = "nebula_color_2", type = "color" },
-	{ key = "nebula_color_3", type = "color" },
-	{ key = "nebula_color_4", type = "color" },
-	{ key = "nebula_color_5", type = "color" },
-
-	{ key = "nebula_warp_strength", type = "float", min_value = 0.0, max_value = 2000.0, step = 1.0 },
-	{ key = "nebula_warp_scale", type = "float", min_value = 0.1, max_value = 20.0, step = 0.1 },
-
-	{ key = "nebula_dist_scale", type = "float", min_value = 0.05, max_value = 10.0, step = 0.05 },
-	{ key = "nebula_dist_octaves", type = "int", min_value = 1, max_value = 8, step = 1 },
-	{ key = "nebula_dist_strength", type = "float", min_value = 0.0, max_value = 1.0, step = 0.01 },
-
-	{ key = "nebula_curl_scale", type = "float", min_value = 0.1, max_value = 20.0, step = 0.1 },
-	{ key = "nebula_curl_strength", type = "float", min_value = 0.0, max_value = 100000.0, step = 5.0 },
-	{ key = "nebula_curl_octaves", type = "int", min_value = 1, max_value = 8, step = 1 },
-	{ key = "nebula_curl_eps", type = "float", min_value = 0.1, max_value = 10.0, step = 0.1 },
-]
-
 var time_last_elapsed := Time.get_ticks_msec() 
 
 # TODO revisit nodes resolution; consider just find with caching instead of explicit
@@ -132,14 +18,9 @@ var _texture: ImageTexture
 var file_manager: FileManager
 
 func _ready() -> void:
-	_build_widgets()
+	SM.build_widgets(settings_panel)
 
-	for uiw_node in get_tree().get_nodes_in_group("UIWidget"):
-		if uiw_node is UIWidget:
-			var key = uiw_node.property_name
-			widget_dict[key] = uiw_node
-			widget_dict[key].value_changed.connect(_value_changed.bind(key))
-			widget_dict[key]._set_value(self[key])
+	SM.wire_widgets(settings_panel)
 
 	generate_button.pressed.connect(generate)
 
@@ -148,42 +29,8 @@ func _ready() -> void:
 
 func _on_save_pressed() -> void:
 	# mock setting for now 
-	file_manager.request_save(_image, seed_value, {})
+	file_manager.request_save(_image, SM.s.seed_value, {})
 
-func _build_widgets() -> void:
-	for cfg in widget_config:
-		var node: UIWidget
-		match cfg.type:
-			"bool":
-				node = UIBoolWidget.new()
-			"color":
-				node = UIColorPickerWidget.new()
-			"float":
-				node = UIFloatWidget.new()
-			"int":
-				node = UIIntWidget.new()
-			_:
-				push_error("Unknown widget type: %s" % cfg.type)
-				continue
-
-		node.name = cfg.key
-		if cfg.has("view"):
-			node.view_name = cfg.view
-
-		if cfg.type in ["float", "int"]:
-			if cfg.has("min_value"): node.min_value = cfg.min_value
-			if cfg.has("max_value"): node.max_value = cfg.max_value
-			if cfg.has("step"): node.step = cfg.step
-
-		settings_panel.add_child(node)
-
-# Consider adding a bool setting and triggerring generation on value change if compute cap enables 
-func _value_changed(value: Variant, key: String, emit: bool = true) -> void:
-	if self[key] == value:
-		return
-	self[key] = value
-	if emit:
-		setting_changed.emit(value, key)
 
 func _build_info_label() -> void:
 	info_label.text = "Elapsed: " + str(time_last_elapsed) + "ms"
@@ -193,13 +40,13 @@ func _build_info_label() -> void:
 
 func generate() -> void:
 	var time_start = Time.get_ticks_msec()
-	if use_random_seed:
-		seed_value = randi()
+	if SM.s.use_random_seed:
+		SM.s.seed_value = randi()
 
-	_image = Image.create(resolution, resolution, false, Image.FORMAT_RGBA8)
+	_image = Image.create(SM.s.resolution, SM.s.resolution, false, Image.FORMAT_RGBA8)
 	var data := _bake_gpu()
 
-	_image.set_data(resolution, resolution, false, Image.FORMAT_RGBA8, data)
+	_image.set_data(SM.s.resolution, SM.s.resolution, false, Image.FORMAT_RGBA8, data)
 	_texture = ImageTexture.create_from_image(_image)
 
 	sprite_2d.texture = _texture
@@ -214,27 +61,27 @@ func _build_push_constant_star_gen(attempt_count: int) -> PackedByteArray:
 	buf.big_endian = false
 
 	buf.put_32(attempt_count)
-	buf.put_32(star_count)       # max_stars (buffer capacity)
-	buf.put_32(resolution)
-	buf.put_32(seed_value)
+	buf.put_32(SM.s.star_count)       # max_stars (buffer capacity)
+	buf.put_32(SM.s.resolution)
+	buf.put_32(SM.s.seed_value)
 
-	buf.put_float(density_noise_scale)
-	buf.put_float(density_bias)
-	buf.put_32(1 if use_density_noise else 0)
-	buf.put_float(brightness_power)
+	buf.put_float(SM.s.density_noise_scale)
+	buf.put_float(SM.s.density_bias)
+	buf.put_32(1 if SM.s.use_density_noise else 0)
+	buf.put_float(SM.s.brightness_power)
 
-	buf.put_float(min_brightness)
-	buf.put_float(max_brightness)
-	buf.put_float(min_radius)
-	buf.put_float(max_radius)
+	buf.put_float(SM.s.min_brightness)
+	buf.put_float(SM.s.max_brightness)
+	buf.put_float(SM.s.min_radius)
+	buf.put_float(SM.s.max_radius)
 
-	buf.put_32(1 if size_follows_brightness else 0)
-	buf.put_32(1 if use_color_variation else 0)
-	buf.put_float(warm_chance)
-	buf.put_float(blue_chance)
+	buf.put_32(1 if SM.s.size_follows_brightness else 0)
+	buf.put_32(1 if SM.s.use_color_variation else 0)
+	buf.put_float(SM.s.warm_chance)
+	buf.put_float(SM.s.blue_chance)
 
-	buf.put_float(giant_chance)
-	buf.put_float(giant_size_multiplier)
+	buf.put_float(SM.s.giant_chance)
+	buf.put_float(SM.s.giant_size_multiplier)
 	buf.put_float(0.0)
 	buf.put_float(0.0)
 
@@ -244,7 +91,7 @@ func _build_nebula_color_buffer() -> PackedByteArray:
 	var buf := StreamPeerBuffer.new()
 	buf.big_endian = false
 
-	for c in _collect_nebula_colors():
+	for c in SM.s._collect_nebula_colors():
 		buf.put_float(c.r)
 		buf.put_float(c.g)
 		buf.put_float(c.b)
@@ -256,30 +103,30 @@ func _build_push_constant_nebula(color_count: int) -> PackedByteArray:
 	var buf := StreamPeerBuffer.new()
 	buf.big_endian = false
 
-	buf.put_float(nebula_scale)
-	buf.put_32(nebula_octaves)
-	buf.put_float(nebula_intensity)
-	buf.put_32(seed_value)
+	buf.put_float(SM.s.nebula_scale)
+	buf.put_32(SM.s.nebula_octaves)
+	buf.put_float(SM.s.nebula_intensity)
+	buf.put_32(SM.s.seed_value)
 
 	buf.put_32(color_count)
-	buf.put_float(float(resolution))
-	buf.put_float(nebula_warp_strength)
-	buf.put_float(nebula_warp_scale)
+	buf.put_float(float(SM.s.resolution))
+	buf.put_float(SM.s.nebula_warp_strength)
+	buf.put_float(SM.s.nebula_warp_scale)
 
-	buf.put_float(background_color.r)
-	buf.put_float(background_color.g)
-	buf.put_float(background_color.b)
-	buf.put_float(background_color.a)
+	buf.put_float(SM.s.background_color.r)
+	buf.put_float(SM.s.background_color.g)
+	buf.put_float(SM.s.background_color.b)
+	buf.put_float(SM.s.background_color.a)
 
-	buf.put_32(1 if use_nebula else 0)
-	buf.put_float(nebula_dist_scale)
-	buf.put_32(nebula_dist_octaves)
-	buf.put_float(nebula_dist_strength)
+	buf.put_32(1 if SM.s.use_nebula else 0)
+	buf.put_float(SM.s.nebula_dist_scale)
+	buf.put_32(SM.s.nebula_dist_octaves)
+	buf.put_float(SM.s.nebula_dist_strength)
 
-	buf.put_float(nebula_curl_scale)
-	buf.put_float(nebula_curl_strength)
-	buf.put_32(nebula_curl_octaves)
-	buf.put_float(nebula_curl_eps)
+	buf.put_float(SM.s.nebula_curl_scale)
+	buf.put_float(SM.s.nebula_curl_strength)
+	buf.put_32(SM.s.nebula_curl_octaves)
+	buf.put_float(SM.s.nebula_curl_eps)
 
 	return buf.data_array
 
@@ -288,7 +135,7 @@ func _build_push_constant_stars(star_count_actual: int) -> PackedByteArray:
 	buf.big_endian = false
 
 	buf.put_32(star_count_actual)
-	buf.put_32(resolution)
+	buf.put_32(SM.s.resolution)
 	buf.put_float(0.0)
 	buf.put_float(0.0)
 
@@ -299,8 +146,8 @@ func _bake_gpu() -> PackedByteArray:
 
 	# shared output image
 	var fmt := RDTextureFormat.new()
-	fmt.width = resolution
-	fmt.height = resolution
+	fmt.width = SM.s.resolution
+	fmt.height = SM.s.resolution
 	fmt.format = RenderingDevice.DATA_FORMAT_R8G8B8A8_UNORM
 	fmt.usage_bits = RenderingDevice.TEXTURE_USAGE_STORAGE_BIT | RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT
 	var view := RDTextureView.new()
@@ -324,18 +171,18 @@ func _bake_gpu() -> PackedByteArray:
 
 	var neb_set := rd.uniform_set_create([neb_img_uniform, neb_color_uniform], neb_shader, 0)
 	var neb_pipeline := rd.compute_pipeline_create(neb_shader)
-	var color_count := nebula_color_count
+	var color_count := SM.s.nebula_color_count
 	var neb_push := _build_push_constant_nebula(color_count)
 
 	# star generation pass
-	var attempt_count := star_count * 20
+	var attempt_count := SM.s.star_count * 20
 	var gen_shader := rd.shader_create_from_spirv(load("res://shaders/compute/stars_generate.glsl").get_spirv())
 
 	var counter_bytes := PackedByteArray()
 	counter_bytes.resize(4)
 	var counter_buf := rd.storage_buffer_create(4, counter_bytes)
 
-	var star_buf := rd.storage_buffer_create(star_count * 32)
+	var star_buf := rd.storage_buffer_create(SM.s.star_count * 32)
 
 	var counter_uniform := RDUniform.new()
 	counter_uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
@@ -357,7 +204,7 @@ func _bake_gpu() -> PackedByteArray:
 	rd.compute_list_bind_compute_pipeline(cl, neb_pipeline)
 	rd.compute_list_bind_uniform_set(cl, neb_set, 0)
 	rd.compute_list_set_push_constant(cl, neb_push, neb_push.size())
-	rd.compute_list_dispatch(cl, ceili(resolution / 8.0), ceili(resolution / 8.0), 1)
+	rd.compute_list_dispatch(cl, ceili(SM.s.resolution / 8.0), ceili(SM.s.resolution / 8.0), 1)
 
 	rd.compute_list_bind_compute_pipeline(cl, gen_pipeline)
 	rd.compute_list_bind_uniform_set(cl, gen_set, 0)
@@ -369,7 +216,7 @@ func _bake_gpu() -> PackedByteArray:
 	rd.sync()
 
 	var count_data := rd.buffer_get_data(counter_buf)
-	var star_count_actual: int = mini(count_data.decode_u32(0), star_count)
+	var star_count_actual: int = mini(count_data.decode_u32(0), SM.s.star_count)
 
 	# star blit pass (own uniform set, needs image + star buffer)
 	var stars_shader := rd.shader_create_from_spirv(load("res://shaders/compute/stars.glsl").get_spirv())
