@@ -24,12 +24,14 @@ func _ready() -> void:
 
 	generate_button.pressed.connect(generate)
 
+	SM._test()
+
 	file_manager = FileManager.new(self)
 	save_button.pressed.connect(_on_save_pressed)
 
 func _on_save_pressed() -> void:
 	# mock setting for now 
-	file_manager.request_save(_image, SM.s.seed_value, {})
+	file_manager.request_save(_image, SM.s.seed_value, SM.s)
 
 
 func _build_info_label() -> void:

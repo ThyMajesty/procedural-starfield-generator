@@ -62,4 +62,4 @@ Generation pipeline per `generate()` call:
 - [ ] Look into vortex-center-based swirl (explicit seed-derived rotation points) as an art-directable alternative to curl
 - [ ] Nebula color count currently capped at 5 flat widget slots — need to be reimplemented to dynamically build and wire colors array
 - [ ] Refine UI scaling
-- [ ] Revisit overall structure and divide into proper classes
+- [ ] Saving Metadata to PNG

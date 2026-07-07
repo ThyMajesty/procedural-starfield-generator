@@ -4,7 +4,35 @@ extends RefCounted
 var save_dialog: FileDialog
 var _pending_image: Image
 var _pending_seed: int
-var _pending_settings: Dictionary
+var _pending_settings: PSG_Settings
+
+# need CRC32 to write png metadata
+static var CRC32_TABLE = _get_crc32_table()
+
+static func _get_crc32_table() -> Array:
+	const P  = 0xEDB88320
+	var crc_table: Array[int]
+	crc_table.resize(256)
+	for n in 256:
+		var crc = n
+		for i in 8:
+			if crc & 1:
+				crc = ((crc >> 1) ^ P) & 0xFFFFFFFF
+			else:
+				crc = (crc >> 1) & 0xFFFFFFFF
+		crc_table[n] = crc
+	return crc_table
+
+func crc32(data) -> int:
+	var crc = 0xFFFFFFFF
+	var xor_out = 0xFFFFFFFF
+
+	var bytes: PackedByteArray = data.to_utf8_buffer()
+
+	for byte in bytes:
+		crc = (CRC32_TABLE[(crc ^ byte) & 0xFF] ^ (crc >> 8)) & 0xFFFFFFFF
+
+	return crc ^ xor_out
 
 func _init(parent: Node) -> void:
 	save_dialog = FileDialog.new()
@@ -14,7 +42,7 @@ func _init(parent: Node) -> void:
 	save_dialog.file_selected.connect(_on_file_selected)
 	parent.add_child(save_dialog)
 
-func request_save(image: Image, seed_value: int, settings: Dictionary) -> void:
+func request_save(image: Image, seed_value: int, settings: PSG_Settings) -> void:
 	if not image:
 		push_warning("Nothing generated yet.")
 		return
